@@ -6,9 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:know_our_school/Model/model.dart';
 
 class readSchoolData extends ChangeNotifier {
-  List<School> schools = []; // List to store School objects
+  School schools = School(
+      numberOfStudents: "Number of Students",
+      numberOfTeachers: "Number of Teachers",
+      schoolAddress: "School Address",
+      schoolName: "School Name"); // List to store School objects
 
-  readSchoolData() {
+  getSchoolData() {
     _loadData();
   }
 
@@ -17,14 +21,12 @@ class readSchoolData extends ChangeNotifier {
     List<dynamic> jsonData = json.decode(jsonString);
 
     jsonData.forEach((schoolData) {
-      School school = School(
+      schools = School(
         numberOfStudents: schoolData['Number of Students'],
         numberOfTeachers: schoolData['Number of Teachers'],
         schoolAddress: schoolData['School Address'],
         schoolName: schoolData['School Name'],
       );
-
-      schools.add(school);
     });
 
     notifyListeners();
