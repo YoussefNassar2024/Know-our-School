@@ -3,12 +3,7 @@ import 'package:know_our_school/Model/model.dart';
 import 'package:know_our_school/ViewModel/view_model.dart';
 import 'package:provider/provider.dart';
 
-class SchoolInfo extends StatefulWidget {
-  @override
-  State<SchoolInfo> createState() => _SchoolInfoState();
-}
-
-class _SchoolInfoState extends State<SchoolInfo> {
+class SchoolInfo extends StatelessWidget {
   String schoolName = "School Name";
 
   String schoolAddress = "School Address";
@@ -19,29 +14,29 @@ class _SchoolInfoState extends State<SchoolInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => readSchoolData(),
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 120,
-          backgroundColor: const Color(0xff477B71),
-          leading: const Icon(
-            Icons.menu,
-            size: 30,
-          ),
-          title: const Text(
-            'School Info',
-            style: TextStyle(color: Colors.white, fontSize: 30),
-          ),
-          centerTitle: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(60),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 120,
+        backgroundColor: const Color(0xff477B71),
+        leading: const Icon(
+          Icons.menu,
+          size: 30,
+        ),
+        title: const Text(
+          'School Info',
+          style: TextStyle(color: Colors.white, fontSize: 30),
+        ),
+        centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(60),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
+      ),
+      body: SingleChildScrollView(
+        child:
+            Consumer<readSchoolData>(builder: (context, schoolProvider, child) {
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -53,13 +48,17 @@ class _SchoolInfoState extends State<SchoolInfo> {
                 ),
               ),
               const SizedBox(height: 15),
-              ReusableTextField(schoolName, Icons.school),
+              ReusableTextField(
+                  schoolProvider.schools.schoolName, Icons.school),
               const SizedBox(height: 15),
-              ReusableTextField(schoolAddress, Icons.location_on_rounded),
+              ReusableTextField(schoolProvider.schools.schoolAddress,
+                  Icons.location_on_rounded),
               const SizedBox(height: 15),
-              ReusableTextField(studentsNo, Icons.person),
+              ReusableTextField(
+                  schoolProvider.schools.numberOfStudents, Icons.person),
               const SizedBox(height: 15),
-              ReusableTextField(teachersNo, Icons.person),
+              ReusableTextField(
+                  schoolProvider.schools.numberOfTeachers, Icons.person),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
@@ -80,42 +79,28 @@ class _SchoolInfoState extends State<SchoolInfo> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Consumer<readSchoolData>(
-                      builder: (context, schoolProvider, _) {
-                        if (schoolProvider.schools.isNotEmpty) {
-                          School school = schoolProvider.schools[0];
-                          return ButtonTheme(
-                            minWidth: 300,
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  schoolName = school.schoolName;
-                                  schoolAddress = school.schoolAddress;
-                                  studentsNo = school.numberOfStudents;
-                                  teachersNo = school.numberOfTeachers;
-                                });
-                              },
-                              child: const Text(
-                                'Show Data',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 27,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return CircularProgressIndicator();
-                        }
-                      },
+                    child: ButtonTheme(
+                      minWidth: 300,
+                      child: TextButton(
+                        onPressed: () {
+                          schoolProvider.getSchoolData();
+                        },
+                        child: const Text(
+                          'Show Data',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 27,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
             ],
-          ),
-        ),
+          );
+        }),
       ),
     );
   }
